@@ -5,4 +5,6 @@
 /data/raw
 /logs
 /notebooks/.ipynb_checkpoints
-/__pycache__
+__pycache__/
+*.pyc
+*.pyo
