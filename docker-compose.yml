@@ -1,0 +1,63 @@
+version: "3.9"
+
+# ============================================================
+#  Clinical Trial Completion Predictor — Docker Compose
+#  Services : api (FastAPI) + ui (Streamlit)
+# ============================================================
+
+networks:
+  trial_network:
+    driver: bridge
+
+services:
+
+  # ----------------------------------------------------------
+  #  Service API — FastAPI + uvicorn
+  # ----------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trial_api
+    ports:
+      - "8000:8000"
+    volumes:
+      # models/ monté en lecture seule : l'API ne doit pas modifier les modèles
+      - ./models:/app/models:ro
+    environment:
+      MODEL_PATH: ${MODEL_PATH:-models/final_model.joblib}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - trial_network
+
+  # ----------------------------------------------------------
+  #  Service UI — Streamlit
+  # ----------------------------------------------------------
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: trial_ui
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trial_network
