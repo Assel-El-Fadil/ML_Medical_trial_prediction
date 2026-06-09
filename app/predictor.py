@@ -110,7 +110,13 @@ class ModelPredictor:
         df = self._add_derived_features(df)
 
         # 3. Prédiction via le pipeline (préprocessing + modèle)
-        proba_matrix = self._pipeline.predict_proba(df)
+        # final_model.joblib est sauvegardé comme un dict avec une clé 'pipeline'
+        pipeline = (
+            self._pipeline["pipeline"]
+            if isinstance(self._pipeline, dict)
+            else self._pipeline
+        )
+        proba_matrix = pipeline.predict_proba(df)
 
         # La colonne 1 correspond à la classe positive (abandon = 1)
         abandon_proba: float = float(proba_matrix[0][1])

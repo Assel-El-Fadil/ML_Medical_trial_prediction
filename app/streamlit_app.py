@@ -454,10 +454,7 @@ elif page == "ℹ️ Informations modèle":
                     index=["Réel : Complété", "Réel : Abandonné"],
                     columns=["Prédit : Complété", "Prédit : Abandonné"],
                 )
-                st.dataframe(
-                    cm_df.style.background_gradient(cmap="Blues"),
-                    use_container_width=False,
-                )
+                st.dataframe(cm_df, use_container_width=False)
 
             # --- Limites ---
             st.markdown("---")
