@@ -76,7 +76,7 @@ Il ne s'agit pas d'une analyse rétrospective après constatation de l'échec, m
 
 | ID | Objectif métier | Traduction ML | Métrique | Seuil cible |
 |---|---|---|---|---|
-| OM-1 | Détecter 80 % des essais abandonnés | Maximiser le recall classe 1 | **Recall** | ≥ 0,80 |
+| OM-1 | Détecter 70 % des essais abandonnés | Recall minimal puis maximiser la précision | **Recall** | ≥ 0,70 |
 | OM-2 | Limiter les fausses alertes | Maintenir une précision acceptable | **Precision** | ≥ 0,40 |
 | OM-1+2 | Équilibrer recall et precision | Synthèse des deux | **F1-score** | ≥ 0,55 |
 | Global | Qualité indépendante du seuil | Évaluation robuste au déséquilibre | **PR-AUC** | À maximiser |

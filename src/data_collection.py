@@ -20,8 +20,6 @@ Usage :
 import argparse
 import json
 import logging
-import math
-import os
 import time
 from datetime import datetime
 from pathlib import Path
@@ -479,7 +477,7 @@ def main():
     sample_df.to_csv(sample_path, index=False, encoding="utf-8")
     logger.info(f"Extrait (100 lignes) sauvegardé → {sample_path}")
 
-    # 5. Sauvegarde Parquet (optionnel, plus efficace pour la Phase 2)
+    # 5. Sauvegarde Parquet
     try:
         parquet_path = PROCESSED_DIR / "dataset.parquet"
         df.to_parquet(parquet_path, index=False)

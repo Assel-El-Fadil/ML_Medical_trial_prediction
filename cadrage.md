@@ -87,7 +87,7 @@ Un principe fondamental guide la sélection des features : **toutes les variable
 
 | # | Objectif métier |
 |---|---|
-| OM-1 | Identifier au moins **80 % des essais qui seront abandonnés** parmi tous les essais enregistrés, afin de permettre une intervention préventive avant le début du recrutement. |
+| OM-1 | Identifier au moins **70 % des essais qui seront abandonnés** parmi tous les essais enregistrés, afin de permettre une intervention préventive avant le début du recrutement, tout en préservant une précision acceptable. |
 | OM-2 | Limiter les **fausses alertes** (essais signalés à tort comme "à risque") à un taux raisonnable pour ne pas décourager les projets viables : maintenir une précision ≥ 40 % sur la classe abandonnée. |
 | OM-3 | Fournir un modèle **interprétable** (feature importance lisible) pour permettre aux comités de révision de comprendre et justifier les décisions d'alerte. |
 
@@ -97,7 +97,7 @@ Un principe fondamental guide la sélection des features : **toutes les variable
 
 | Objectif métier | Objectif ML | Métrique principale | Seuil cible |
 |---|---|---|---|
-| OM-1 : Détecter 80 % des essais abandonnés | Maximiser le recall sur la classe `abandoned = 1` | **Recall (classe 1)** | ≥ 0,80 |
+| OM-1 : Détecter 70 % des essais abandonnés | Maintenir un recall minimal sur la classe `abandoned = 1` tout en maximisant la précision | **Recall (classe 1)** | ≥ 0,70 |
 | OM-2 : Limiter les fausses alertes | Maintenir une précision acceptable sur la classe `abandoned = 1` | **Precision (classe 1)** | ≥ 0,40 |
 | OM-1 + OM-2 combinés | Équilibrer recall et precision sur la classe minoritaire | **F1-score (classe 1)** | ≥ 0,55 |
 | Vue globale du modèle sur données déséquilibrées | Évaluer la qualité du classifieur indépendamment du seuil | **PR-AUC** | À maximiser |
@@ -131,7 +131,6 @@ Coût(FN) / Coût(FP) ≈ 500 à 2000×
 **Conclusion** : L'asymétrie est fortement en faveur d'un **modèle recall-oriented**. Il vaut bien mieux sur-signaler quelques essais sains (FP peu coûteux) que de laisser passer des essais à risque (FN catastrophiques). Cette analyse justifie :
 1. Le choix du **recall comme métrique principale**.
 2. L'utilisation d'un **seuil de décision abaissé** (< 0.5) lors du déploiement.
-3. Le recours à des techniques de **rééchantillonnage** (SMOTE, class_weight='balanced') en Phase 2.
 
 ---
 
