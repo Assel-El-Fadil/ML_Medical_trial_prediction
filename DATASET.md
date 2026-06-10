@@ -168,5 +168,3 @@ Variables **exclues** pour cette raison :
 2. **`condition_category`** : Variable texte libre requérant une normalisation (encodage des termes MeSH de haut niveau) en Phase 2.
 
 3. **Valeurs manquantes** : Certains champs optionnels de l'API (has_dmc, allocation, masking) peuvent être absents pour les essais plus anciens. Une stratégie d'imputation sera définie en Phase 2.
-
-4. **Biais temporel** : Les essais récents (post-2020) sont sur-représentés dans ClinicalTrials.gov. Ce biais doit être documenté dans la Phase 2.

@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 _MODEL_METRICS = {
     "model_type": "SVC (kernel=linear, C=0.1)",
     "balancing_strategy": "RandomUnderSampler",
-    "training_date": "2026-06-09",
-    "threshold_deployed": 0.35,         # seuil recall-oriented utilisé en prod
+    "training_date": "2026-06-07",
+    "threshold_deployed": 0.51,         # seuil recall-oriented utilisé en prod
     "threshold_phase3": 0.51,           # seuil optimal issu de la Phase 3
     "performance": {
         "recall":    round(0.6972111553784861, 4),
@@ -37,12 +37,6 @@ _MODEL_METRICS = {
         "accuracy":  round(0.7994550408719346, 4),
         "roc_auc":   round(0.8294058614028734, 4),
         "pr_auc":    round(0.6075462211531307, 4),
-    },
-    "confusion_matrix": {
-        "true_negatives":  1292,
-        "false_positives":  292,
-        "false_negatives":   76,
-        "true_positives":   175,
     },
 }
 
@@ -75,7 +69,7 @@ app = FastAPI(
     description=(
         "API de prédiction de l'issue (abandon / complétion) d'un essai clinique. "
         "Basée sur un pipeline SVC entraîné sur la base ClinicalTrials.gov. "
-        "Seuil de décision orienté recall (0.35) pour maximiser la détection des abandons."
+        "Seuil de décision orienté recall (0.51) pour maximiser la détection des abandons."
     ),
     version="1.0.0",
     lifespan=lifespan,

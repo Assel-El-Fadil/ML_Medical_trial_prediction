@@ -20,11 +20,11 @@ class ModelPredictor:
     Attributs de classe
     -------------------
     THRESHOLD : float
-        Seuil de décision orienté recall (0.35) — un essai est prédit
+        Seuil de décision orienté recall (0.51) — un essai est prédit
         « abandonné » si P(abandon) >= THRESHOLD.
     """
 
-    THRESHOLD: float = 0.35
+    THRESHOLD: float = 0.51
 
     def __init__(self) -> None:
         raw = self._load_model()

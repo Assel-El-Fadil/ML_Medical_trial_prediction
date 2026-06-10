@@ -87,7 +87,7 @@ class PredictResponse(BaseModel):
             "example": {
                 "prediction": "complete",
                 "probability": 0.82,
-                "threshold": 0.5,
+                "threshold": 0.51,
                 "confidence": "high",
             }
         }
