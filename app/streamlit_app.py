@@ -18,18 +18,18 @@ API_URL = os.environ.get("API_URL", "http://localhost:8000").rstrip("/")
 
 st.set_page_config(
     page_title="Clinical Trial Predictor",
-    page_icon="🔬",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ---------------------------------------------------------------------------
-# CSS personnalisé
+# CSS personnalise
 # ---------------------------------------------------------------------------
 st.markdown(
     """
     <style>
-        /* Palette générale */
+        /* Palette generale */
         [data-testid="stAppViewContainer"] { background: #0f1117; }
         [data-testid="stSidebar"] { background: #1a1d2e; }
 
@@ -37,7 +37,7 @@ st.markdown(
         h1 { color: #e8eaf6; font-weight: 800; }
         h2, h3 { color: #c5cae9; }
 
-        /* Cartes de résultat */
+        /* Cartes de resultat */
         .result-card {
             padding: 1.5rem 2rem;
             border-radius: 14px;
@@ -106,12 +106,12 @@ with st.sidebar:
         "https://img.icons8.com/fluency/96/test-tube.png",
         width=70,
     )
-    st.markdown("## 🔬 Trial Predictor")
-    st.caption("Prédiction d'issue d'essai clinique")
+    st.markdown("## Trial Predictor")
+    st.caption("Prediction d'issue d'essai clinique")
     st.markdown("---")
     page = st.radio(
         "Navigation",
-        ["🎯 Prédiction unitaire", "📂 Prédiction en lot", "ℹ️ Informations modèle"],
+        ["Prediction unitaire", "Prediction en lot", "Informations modele"],
         label_visibility="collapsed",
     )
     st.markdown("---")
@@ -120,20 +120,20 @@ with st.sidebar:
     try:
         r = requests.get(f"{API_URL}/health", timeout=3)
         if r.ok and r.json().get("model_loaded"):
-            st.success("✅ API connectée")
+            st.success("API connectee")
         else:
-            st.warning("⚠️ API sans modèle")
+            st.warning("API sans modele")
     except Exception:
-        st.error("❌ API inaccessible")
+        st.error("API inaccessible")
 
 # ===========================================================================
-# PAGE 1 — PRÉDICTION UNITAIRE
+# PAGE 1 — PREDICTION UNITAIRE
 # ===========================================================================
-if page == "🎯 Prédiction unitaire":
-    st.title("🎯 Prédiction unitaire")
+if page == "Prediction unitaire":
+    st.title("Prediction unitaire")
     st.markdown(
-        "Renseignez les caractéristiques de l'essai clinique pour obtenir "
-        "une prédiction de son issue (abandon ou complétion)."
+        "Renseignez les caracteristiques de l'essai clinique pour obtenir "
+        "une prediction de son issue (abandon ou completion)."
     )
     st.markdown("---")
 
@@ -141,7 +141,7 @@ if page == "🎯 Prédiction unitaire":
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.subheader("🔖 Identification")
+            st.subheader("Identification")
             phase = st.selectbox(
                 "Phase",
                 ["PHASE1", "PHASE2", "PHASE3", "PHASE4",
@@ -165,7 +165,7 @@ if page == "🎯 Prédiction unitaire":
             )
 
         with col2:
-            st.subheader("👥 Participants & Sites")
+            st.subheader("Participants et Sites")
             enrollment_count = st.number_input(
                 "Nombre de participants", min_value=1, value=150, step=10
             )
@@ -177,7 +177,7 @@ if page == "🎯 Prédiction unitaire":
                 format_func=lambda x: x[1]
             )[0]
             has_us_site = st.selectbox(
-                "Site aux États-Unis", options=[(1, "Oui"), (0, "Non")],
+                "Site aux Etats-Unis", options=[(1, "Oui"), (0, "Non")],
                 format_func=lambda x: x[1]
             )[0]
             n_collaborators = st.number_input(
@@ -185,7 +185,7 @@ if page == "🎯 Prédiction unitaire":
             )
 
         with col3:
-            st.subheader("📋 Protocole")
+            st.subheader("Protocole")
             n_arms = st.number_input(
                 "Nombre de bras", min_value=0, value=2, step=1
             )
@@ -198,18 +198,18 @@ if page == "🎯 Prédiction unitaire":
                 index=2,
             )
             has_dmc = st.selectbox(
-                "Comité de surveillance (DMC)",
+                "Comite de surveillance (DMC)",
                 options=[(1, "Oui"), (0, "Non")],
                 format_func=lambda x: x[1]
             )[0]
             n_primary_outcomes = st.number_input(
-                "Critères primaires", min_value=0, value=1, step=1
+                "Criteres primaires", min_value=0, value=1, step=1
             )
             n_secondary_outcomes = st.number_input(
-                "Critères secondaires", min_value=0, value=3, step=1
+                "Criteres secondaires", min_value=0, value=3, step=1
             )
 
-        submitted = st.form_submit_button("🔮 Prédire l'issue de l'essai")
+        submitted = st.form_submit_button("Predire l'issue de l'essai")
 
     if submitted:
         payload = {
@@ -230,7 +230,7 @@ if page == "🎯 Prédiction unitaire":
             "n_collaborators": int(n_collaborators),
         }
         try:
-            with st.spinner("Analyse en cours…"):
+            with st.spinner("Analyse en cours..."):
                 resp = requests.post(f"{API_URL}/predict", json=payload, timeout=10)
 
             if resp.status_code == 200:
@@ -242,19 +242,18 @@ if page == "🎯 Prédiction unitaire":
 
                 is_abandon = pred == "abandonne"
                 css_class  = "result-abandon" if is_abandon else "result-complete"
-                emoji      = "🚨" if is_abandon else "✅"
-                label      = "Risque élevé d'abandon" if is_abandon else "Risque faible d'abandon"
+                label      = "Risque eleve d'abandon" if is_abandon else "Risque faible d'abandon"
                 badge_cls  = f"badge-{conf}"
 
-                conf_labels = {"high": "Confiance élevée", "medium": "Confiance moyenne", "low": "Confiance faible"}
+                conf_labels = {"high": "Confiance elevee", "medium": "Confiance moyenne", "low": "Confiance faible"}
                 conf_text = conf_labels.get(conf, conf)
 
                 st.markdown(
                     f"""
                     <div class="result-card {css_class}">
-                        <div class="result-title">{emoji} {label}</div>
+                        <div class="result-title">{label}</div>
                         <div class="result-proba">{proba * 100:.1f} %</div>
-                        <div class="result-conf">Probabilité d'abandon</div>
+                        <div class="result-conf">Probabilite d'abandon</div>
                         <span class="badge {badge_cls}">{conf_text}</span>
                     </div>
                     """,
@@ -266,13 +265,13 @@ if page == "🎯 Prédiction unitaire":
                 with c1:
                     st.markdown(
                         f'<div class="metric-box"><div class="metric-val">{proba*100:.1f}%</div>'
-                        f'<div class="metric-lbl">Probabilité d\'abandon</div></div>',
+                        f'<div class="metric-lbl">Probabilite d\'abandon</div></div>',
                         unsafe_allow_html=True,
                     )
                 with c2:
                     st.markdown(
                         f'<div class="metric-box"><div class="metric-val">{threshold}</div>'
-                        f'<div class="metric-lbl">Seuil de décision</div></div>',
+                        f'<div class="metric-lbl">Seuil de decision</div></div>',
                         unsafe_allow_html=True,
                     )
                 with c3:
@@ -283,27 +282,27 @@ if page == "🎯 Prédiction unitaire":
                     )
 
             elif resp.status_code == 422:
-                st.error("❌ Données invalides : " + str(resp.json().get("detail")))
+                st.error("Donnees invalides : " + str(resp.json().get("detail")))
             else:
-                st.error(f"❌ Erreur API ({resp.status_code}) : {resp.text}")
+                st.error(f"Erreur API ({resp.status_code}) : {resp.text}")
 
         except requests.ConnectionError:
-            st.error("❌ Impossible de joindre l'API. Vérifiez qu'elle est démarrée.")
+            st.error("Impossible de joindre l'API. Verifiez qu'elle est demarree.")
         except Exception as exc:
-            st.error(f"❌ Erreur inattendue : {exc}")
+            st.error(f"Erreur inattendue : {exc}")
 
 
 # ===========================================================================
-# PAGE 2 — PRÉDICTION EN LOT
+# PAGE 2 — PREDICTION EN LOT
 # ===========================================================================
-elif page == "📂 Prédiction en lot":
-    st.title("📂 Prédiction en lot")
+elif page == "Prediction en lot":
+    st.title("Prediction en lot")
     st.markdown(
         "Uploadez un fichier CSV contenant une ligne par essai clinique. "
-        "Les colonnes doivent correspondre aux champs du formulaire de prédiction unitaire."
+        "Les colonnes doivent correspondre aux champs du formulaire de prediction unitaire."
     )
 
-    with st.expander("📋 Format attendu du CSV", expanded=False):
+    with st.expander("Format attendu du CSV", expanded=False):
         sample = pd.DataFrame([{
             "phase": "PHASE2", "sponsor_type": "INDUSTRY",
             "enrollment_count": 150, "intervention_type": "DRUG",
@@ -316,7 +315,7 @@ elif page == "📂 Prédiction en lot":
         st.dataframe(sample, use_container_width=True)
         csv_sample = sample.to_csv(index=False).encode("utf-8")
         st.download_button(
-            "⬇️ Télécharger un fichier exemple",
+            "Telecharger un fichier exemple",
             csv_sample,
             "exemple_essais.csv",
             "text/csv",
@@ -330,15 +329,15 @@ elif page == "📂 Prédiction en lot":
             df_preview = pd.read_csv(uploaded)
             uploaded.seek(0)
         except Exception as exc:
-            st.error(f"❌ Impossible de lire le fichier : {exc}")
+            st.error(f"Impossible de lire le fichier : {exc}")
             st.stop()
 
-        st.success(f"✅ Fichier chargé — {len(df_preview)} ligne(s), {len(df_preview.columns)} colonne(s)")
+        st.success(f"Fichier charge — {len(df_preview)} ligne(s), {len(df_preview.columns)} colonne(s)")
         st.dataframe(df_preview.head(5), use_container_width=True)
 
-        if st.button("🚀 Lancer les prédictions"):
+        if st.button("Lancer les predictions"):
             try:
-                with st.spinner(f"Prédiction sur {len(df_preview)} essai(s)…"):
+                with st.spinner(f"Prediction sur {len(df_preview)} essai(s)..."):
                     files = {"file": (uploaded.name, uploaded.read(), "text/csv")}
                     resp = requests.post(
                         f"{API_URL}/predict/batch", files=files, timeout=60
@@ -347,20 +346,20 @@ elif page == "📂 Prédiction en lot":
                 if resp.status_code == 200:
                     result_df = pd.read_csv(io.StringIO(resp.text))
 
-                    st.markdown("### 📊 Résultats")
+                    st.markdown("### Resultats")
 
-                    # Métriques rapides
+                    # Metriques rapides
                     n_abandon  = (result_df["prediction"] == "abandonne").sum()
                     n_complete = (result_df["prediction"] == "complete").sum()
                     c1, c2, c3 = st.columns(3)
                     with c1:
                         st.metric("Total d'essais", len(result_df))
                     with c2:
-                        st.metric("🚨 Abandons prédits", n_abandon)
+                        st.metric("Abandons predits", n_abandon)
                     with c3:
-                        st.metric("✅ Complétions prédites", n_complete)
+                        st.metric("Completions predites", n_complete)
 
-                    # Tableau coloré
+                    # Tableau colore
                     def color_prediction(val):
                         if val == "abandonne":
                             return "background-color: #4a0000; color: #ef9a9a"
@@ -371,35 +370,35 @@ elif page == "📂 Prédiction en lot":
                     )
                     st.dataframe(styled, use_container_width=True)
 
-                    # Téléchargement
+                    # Telechargement
                     st.download_button(
-                        label="⬇️ Télécharger le CSV enrichi",
+                        label="Telecharger le CSV enrichi",
                         data=resp.content,
                         file_name=uploaded.name.replace(".csv", "_predictions.csv"),
                         mime="text/csv",
                     )
                 else:
-                    st.error(f"❌ Erreur API ({resp.status_code}) : {resp.text}")
+                    st.error(f"Erreur API ({resp.status_code}) : {resp.text}")
 
             except requests.ConnectionError:
-                st.error("❌ Impossible de joindre l'API.")
+                st.error("Impossible de joindre l'API.")
             except Exception as exc:
-                st.error(f"❌ Erreur inattendue : {exc}")
+                st.error(f"Erreur inattendue : {exc}")
 
 
 # ===========================================================================
-# PAGE 3 — INFORMATIONS MODÈLE
+# PAGE 3 — INFORMATIONS MODELE
 # ===========================================================================
-elif page == "ℹ️ Informations modèle":
-    st.title("ℹ️ Informations sur le modèle")
+elif page == "Informations modele":
+    st.title("Informations sur le modele")
     st.markdown(
-        "Cette page affiche les informations techniques du modèle déployé, "
-        "ses métriques de performance et ses limites d'utilisation."
+        "Cette page affiche les informations techniques du modele deploye, "
+        "ses metriques de performance et ses limites d'utilisation."
     )
     st.markdown("---")
 
     try:
-        with st.spinner("Récupération des informations…"):
+        with st.spinner("Recuperation des informations..."):
             resp = requests.get(f"{API_URL}/model/info", timeout=5)
 
         if resp.status_code == 200:
@@ -407,27 +406,27 @@ elif page == "ℹ️ Informations modèle":
             perf = info.get("performance", {})
             cm   = info.get("confusion_matrix", {})
 
-            # --- En-tête modèle ---
+            # --- En-tete modele ---
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown("### 🤖 Modèle")
+                st.markdown("### Modele")
                 st.info(f"**Type :** {info.get('model_type', 'N/A')}")
-                st.info(f"**Stratégie de rééquilibrage :** {info.get('balancing_strategy', 'N/A')}")
-                st.info(f"**Date d'entraînement :** {info.get('training_date', 'N/A')}")
+                st.info(f"**Strategie de reequilibrage :** {info.get('balancing_strategy', 'N/A')}")
+                st.info(f"**Date d'entrainement :** {info.get('training_date', 'N/A')}")
             with col2:
-                st.markdown("### ⚙️ Seuils")
-                st.info(f"**Seuil déployé (production) :** {info.get('threshold_deployed', 'N/A')}")
+                st.markdown("### Seuils")
+                st.info(f"**Seuil deploye (production) :** {info.get('threshold_deployed', 'N/A')}")
                 st.info(f"**Seuil optimal Phase 3 :** {info.get('threshold_phase3', 'N/A')}")
 
             st.markdown("---")
 
-            # --- Métriques de performance ---
-            st.markdown("### 📈 Métriques de performance (test set, Phase 3)")
+            # --- Metriques de performance ---
+            st.markdown("### Metriques de performance (test set, Phase 3)")
             c1, c2, c3, c4, c5 = st.columns(5)
             metrics = [
-                ("Recall",     perf.get("recall",    0), c1, "Détection des abandons"),
-                ("Precision",  perf.get("precision", 0), c2, "Fiabilité des alertes"),
-                ("F1-score",   perf.get("f1",        0), c3, "Équilibre recall/précision"),
+                ("Recall",     perf.get("recall",    0), c1, "Detection des abandons"),
+                ("Precision",  perf.get("precision", 0), c2, "Fiabilite des alertes"),
+                ("F1-score",   perf.get("f1",        0), c3, "Equilibre recall/precision"),
                 ("Accuracy",   perf.get("accuracy",  0), c4, "Exactitude globale"),
                 ("ROC-AUC",    perf.get("roc_auc",   0), c5, "Pouvoir discriminant"),
             ]
@@ -445,31 +444,31 @@ elif page == "ℹ️ Informations modèle":
             # --- Matrice de confusion ---
             if cm:
                 st.markdown("---")
-                st.markdown("### 🔲 Matrice de confusion (test set)")
+                st.markdown("### Matrice de confusion (test set)")
                 cm_df = pd.DataFrame(
                     [
                         [cm.get("true_negatives",  0), cm.get("false_positives", 0)],
                         [cm.get("false_negatives", 0), cm.get("true_positives",  0)],
                     ],
-                    index=["Réel : Complété", "Réel : Abandonné"],
-                    columns=["Prédit : Complété", "Prédit : Abandonné"],
+                    index=["Reel : Complete", "Reel : Abandonne"],
+                    columns=["Prediction : Complete", "Prediction : Abandonne"],
                 )
                 st.dataframe(cm_df, use_container_width=False)
 
             # --- Limites ---
             st.markdown("---")
-            st.markdown("### ⚠️ Limites et précautions")
+            st.markdown("### Limites et precautions")
             st.warning(
-                "**Ce modèle est un outil d'aide à la décision, pas un oracle.** "
-                "Il a été entraîné sur des données historiques de ClinicalTrials.gov "
-                "et peut ne pas généraliser à des essais très atypiques."
+                "**Ce modele est un outil d'aide a la decision, pas un oracle.** "
+                "Il a ete entraine sur des donnees historiques de ClinicalTrials.gov "
+                "et peut ne pas generaliser a des essais tres atypiques."
             )
             st.markdown(
                 """
-                - 🔴 **Recall = {:.0%}** — environ {:.0%} des essais abandonnés sont manqués
-                - 🟡 **Precision = {:.0%}** — certaines alertes sont de fausses alarmes
-                - ⚙️ Le seuil de production (0.35) est orienté **recall** : privilégie la détection au détriment de la précision
-                - 📅 Les données d'entraînement sont antérieures à 2024 — des tendances récentes peuvent ne pas être capturées
+                - **Recall = {:.0%}** — environ {:.0%} des essais abandonnes sont manques
+                - **Precision = {:.0%}** — certaines alertes sont de fausses alarmes
+                - Le seuil de production est oriente **recall** : privilegie la detection au detriment de la precision
+                - Les donnees d'entrainement sont anterieures a 2024 — des tendances recentes peuvent ne pas etre capturees
                 """.format(
                     perf.get("recall", 0),
                     1 - perf.get("recall", 0),
@@ -478,9 +477,9 @@ elif page == "ℹ️ Informations modèle":
             )
 
         else:
-            st.error(f"❌ Erreur API ({resp.status_code}) : {resp.text}")
+            st.error(f"Erreur API ({resp.status_code}) : {resp.text}")
 
     except requests.ConnectionError:
-        st.error("❌ Impossible de joindre l'API. Vérifiez qu'elle est démarrée.")
+        st.error("Impossible de joindre l'API. Verifiez qu'elle est demarree.")
     except Exception as exc:
-        st.error(f"❌ Erreur inattendue : {exc}")
+        st.error(f"Erreur inattendue : {exc}")

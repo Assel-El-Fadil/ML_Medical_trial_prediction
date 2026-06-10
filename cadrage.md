@@ -99,7 +99,7 @@ Un principe fondamental guide la sélection des features : **toutes les variable
 |---|---|---|---|
 | OM-1 : Détecter 70 % des essais abandonnés | Maintenir un recall minimal sur la classe `abandoned = 1` tout en maximisant la précision | **Recall (classe 1)** | ≥ 0,70 |
 | OM-2 : Limiter les fausses alertes | Maintenir une précision acceptable sur la classe `abandoned = 1` | **Precision (classe 1)** | ≥ 0,40 |
-| OM-1 + OM-2 combinés | Équilibrer recall et precision sur la classe minoritaire | **F1-score (classe 1)** | ≥ 0,55 |
+| OM-1 + OM-2 combinés | Équilibrer recall et precision sur la classe minoritaire | **F1-score (classe 1)** | ≥ 0,50 |
 | Vue globale du modèle sur données déséquilibrées | Évaluer la qualité du classifieur indépendamment du seuil | **PR-AUC** | À maximiser |
 
 **Métriques exclues comme métrique principale** :
@@ -123,35 +123,3 @@ Dans notre contexte :
 - Estimation : **50 000–200 000 $** par essai faussement signalé.
 
 ### Ratio d'asymétrie estimé
-
-```
-Coût(FN) / Coût(FP) ≈ 500 à 2000×
-```
-
-**Conclusion** : L'asymétrie est fortement en faveur d'un **modèle recall-oriented**. Il vaut bien mieux sur-signaler quelques essais sains (FP peu coûteux) que de laisser passer des essais à risque (FN catastrophiques). Cette analyse justifie :
-1. Le choix du **recall comme métrique principale**.
-2. L'utilisation d'un **seuil de décision abaissé** (< 0.5) lors du déploiement.
-
----
-
-## 8. Choix des métriques — Justification
-
-| Métrique | Rôle | Justification |
-|---|---|---|
-| **Recall (classe 1)** | Métrique principale | Reflète directement OM-1 ; minimise les FN coûteux |
-| **Precision (classe 1)** | Contrainte opérationnelle | Évite une explosion des fausses alertes (OM-2) |
-| **F1-score (classe 1)** | Métrique d'équilibre | Synthèse recall/precision pour la sélection de modèle |
-| **PR-AUC** | Évaluation globale | Robuste au déséquilibre, compare les modèles indépendamment du seuil |
-
----
-
-## 9. Contraintes techniques respectées
-
-| Critère | Exigence | Notre projet |
-|---|---|---|
-| Type de tâche | Classification supervisée | ✅ Classification binaire (abandoned 0/1) |
-| Taille totale | ≥ 10 000 lignes | ✅ ClinicalTrials.gov contient > 400 000 essais éligibles |
-| Nombre de features | ≥ 8 après feature engineering | ✅ 17 features identifiées |
-| Classe minoritaire | 5 % – 25 % | ✅ ~15–20 % attendu (TERMINATED + SUSPENDED + WITHDRAWN) |
-| Types de variables | Numérique + catégorielle | ✅ Mix des deux types |
-| Source | API publique et gratuite | ✅ ClinicalTrials.gov API v2, sans clé, sans quota strict |

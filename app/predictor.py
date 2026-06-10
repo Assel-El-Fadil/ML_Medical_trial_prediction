@@ -27,7 +27,9 @@ class ModelPredictor:
     THRESHOLD: float = 0.35
 
     def __init__(self) -> None:
-        self._pipeline = self._load_model()
+        raw = self._load_model()
+        # final_model.joblib peut être sauvegardé comme un dict {"pipeline": ...}
+        self._pipeline = raw["pipeline"] if isinstance(raw, dict) else raw
 
     # ------------------------------------------------------------------
     # Chargement du modèle
@@ -80,6 +82,11 @@ class ModelPredictor:
             df["n_locations"].replace(0, 1)
         )
 
+        # Ratio outcomes secondaires / primaires (évite la division par zéro)
+        df["outcomes_ratio"] = df["n_secondary_outcomes"] / (
+            df["n_primary_outcomes"].replace(0, 1)
+        )
+
         return df
 
     # ------------------------------------------------------------------
@@ -110,13 +117,7 @@ class ModelPredictor:
         df = self._add_derived_features(df)
 
         # 3. Prédiction via le pipeline (préprocessing + modèle)
-        # final_model.joblib est sauvegardé comme un dict avec une clé 'pipeline'
-        pipeline = (
-            self._pipeline["pipeline"]
-            if isinstance(self._pipeline, dict)
-            else self._pipeline
-        )
-        proba_matrix = pipeline.predict_proba(df)
+        proba_matrix = self._pipeline.predict_proba(df)
 
         # La colonne 1 correspond à la classe positive (abandon = 1)
         abandon_proba: float = float(proba_matrix[0][1])
@@ -156,7 +157,5 @@ class ModelPredictor:
         return "low"
 
 
-# ------------------------------------------------------------------
-# Singleton — instancié une seule fois à l'import du module
-# ------------------------------------------------------------------
-predictor = ModelPredictor()
+# NOTE: Ne pas instancier ModelPredictor ici.
+# Le singleton est géré par main.py via le lifespan FastAPI.
